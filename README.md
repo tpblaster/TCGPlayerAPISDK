@@ -1,8 +1,8 @@
 # TCGPlayerAPISDK
-An unnoficial python SDK for the TCGPlayer.com API
+An unofficial python SDK for the TCGPlayer.com API
 
 # Introduction
-I started working on this SDK after several months of working with the TCGPlayer API, I wanted to make this for my own personal projects while also helping others make there own projects without stumbling through the API like I did. This is my first major project so any constructive criticism is much appreciated.
+I started working on this SDK after several months of working with the TCGPlayer API, I wanted to make this for my own personal projects while also helping others make there own projects without stumbling through the API like I did. This is my first major project so any constructive criticism is appreciated.
 
 # Credentials
 In order to utilize any of the API endpoints you first need a bearer token. In order to a get bearer token you need a client secret and public from TCGPlayer. These credentials can be applied for at: <br>

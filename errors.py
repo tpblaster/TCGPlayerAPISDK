@@ -54,3 +54,29 @@ class InvalidPricingRequest(Exception):
     def __init__(self, message="No data was found for the sku ids passed or the sku ids were invalid"):
         self.message = message
         super().__init__(self.message)
+
+
+class InvalidGroupId(Exception):
+    """
+    Exception raised when a request is returned with a status code of 400 from an endpoint, this signifies that the
+    group id was equal to or less than 0
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="group id was equal to or less than 0"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class NoDataFoundForGroup(Exception):
+    """
+    Exception raised when a 404 response is returned by an endpoint that requests a group id and returns data
+
+    Attributes:
+        message -- explanation of the error
+    """
+    def __init__(self, message="group id is invalid or group has no pricing data"):
+        self.message = message
+        super().__init__(self.message)

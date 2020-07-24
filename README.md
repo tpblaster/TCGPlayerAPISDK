@@ -1,5 +1,5 @@
 # TCGPlayerAPISDK
-An unofficial python SDK for the TCGPlayer.com API
+An unofficial python SDK for the TCGPlayer.com API. This SDK is focused on Magic: the Gathering data and may have potential bugs for other games.
 
 # Introduction
 I started working on this SDK after several months of working with the TCGPlayer API, I wanted to make this for my own personal projects while also helping others make there own projects without stumbling through the API like I did. This is my first major project so any constructive criticism is appreciated.

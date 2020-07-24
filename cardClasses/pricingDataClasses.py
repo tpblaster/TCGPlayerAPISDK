@@ -1,3 +1,4 @@
+# Potential use in the future but for now they will not be used
 class SkuPricingData:
     def __init__(self, skuId, lowPrice, lowestShipping, lowestListingPrice, marketPrice, directLowPrice):
         self.skuId = skuId

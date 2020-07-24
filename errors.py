@@ -45,13 +45,13 @@ class InvalidBearerRequest(Exception):
 
 class InvalidPricingRequest(Exception):
     """
-    Exception raised when either no data was found or all sku ids passed were invalid
+    Exception raised when either no data was found or all ids passed were invalid
 
     Attributes:
         message -- explanation of the error
     """
 
-    def __init__(self, message="No data was found for the sku ids passed or the sku ids were invalid"):
+    def __init__(self, message="No data was found for the ids passed or the ids were invalid"):
         self.message = message
         super().__init__(self.message)
 

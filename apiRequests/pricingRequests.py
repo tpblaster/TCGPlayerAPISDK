@@ -100,6 +100,7 @@ def get_product_list_market_price(bearer: str, product_list: list):
 
 
 # Takes a single product id and returns a list of all pricing data for each subTypeName
+# TODO redo code to handle single length lists, remove extraneous functions
 
 def get_single_product_market_price(bearer: str, product_id: int):
     url = "https://api.tcgplayer.com/pricing/product/{}".format(product_id)
@@ -117,6 +118,7 @@ def get_single_product_market_price(bearer: str, product_id: int):
 
 # Takes a list of product ids and returns buylist data
 # Takes a list of integer based product ids
+
 def get_product_list_buylist_price(bearer: str, product_list: list):
     # Handles potential 400 responses
     if len(product_list) > 250 or len(product_list) < 2:

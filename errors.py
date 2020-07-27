@@ -70,6 +70,20 @@ class InvalidGroupId(Exception):
         super().__init__(self.message)
 
 
+class InvalidCategoryId(Exception):
+    """
+    Exception raised when a request is returned with a status code of 400 from an endpoint, this signifies that the
+    category id was equal to or less than 0
+
+    Attributes:
+        message -- explanation of the error
+    """
+
+    def __init__(self, message="category id was equal to or less than 0"):
+        self.message = message
+        super().__init__(self.message)
+
+
 class NoDataFoundForGroup(Exception):
     """
     Exception raised when a 404 response is returned by an endpoint that requests a group id and returns data
@@ -77,6 +91,32 @@ class NoDataFoundForGroup(Exception):
     Attributes:
         message -- explanation of the error
     """
+
     def __init__(self, message="group id is invalid or group has no pricing data"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidCategoryRequest(Exception):
+    """
+    Exception raised when a 404 response is returned by an endpoint that accepts categories and returns groups
+
+    Attributes:
+        message --- explanation of the error
+    """
+
+    def __init__(self, message="category is invalid or has no data"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidProductIdRequest(Exception):
+    """
+    Exception raised when a 404 request is returned from an endpoint that takes product ids and returns non pricing data
+
+    Attributes:
+        message --- explanation of the error
+    """
+    def __init__(self, message="one or more product ids are invalid or have no data associated with them"):
         self.message = message
         super().__init__(self.message)

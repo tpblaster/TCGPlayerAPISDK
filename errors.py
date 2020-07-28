@@ -117,6 +117,20 @@ class InvalidProductIdRequest(Exception):
     Attributes:
         message --- explanation of the error
     """
+
     def __init__(self, message="one or more product ids are invalid or have no data associated with them"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class InvalidSkuIdRequest(Exception):
+    """
+    Exception raised when a 404 request is returned from an endpoint that takes sku ids and returns non pricing data
+
+    Attributes:
+        message --- explanation of the error
+    """
+
+    def __init__(self, message="one or more sku ids are invalid or have no data associated with them"):
         self.message = message
         super().__init__(self.message)

@@ -2,17 +2,23 @@ import json
 
 import requests
 
-from errors import InvalidBearerToken, InvalidListLength, InvalidPricingRequest, InvalidGroupId, NoDataFoundForGroup
+from errors import InvalidBearerToken, InvalidListLength, InvalidPricingRequest, InvalidGroupId, NoDataFoundForGroup, \
+    InvalidSkuIdRequest
 
 
-# This endpoint takes a product condition id or a list of them and returns market data for them
-# if you want pricing data for a single id then then use single_sku_market_price
-# you can pass up to 250 sku ids into this endpoint
-# expects a list of ints
+def get_sku_market_price(bearer: str, sku_list: list):
+    """
+    This endpoint takes a product condition id/sku id or a list of them and returns market data for them
 
+    Endpoint accepts up to 250 sku ids
 
-def get_sku_list_market_price(bearer: str, sku_list: list):
-    if len(sku_list) > 250 or len(sku_list) < 2:
+    Endpoint name is List SKU Market Prices
+
+    :param bearer: string based access token
+    :param sku_list: integer based list of sku ids
+    :return: returns full json response with error data indicated in the error section of the object
+    """
+    if len(sku_list) > 250 or len(sku_list) < 1:
         raise InvalidListLength(len(sku_list))
     else:
         url = "https://api.tcgplayer.com/pricing/sku/" + ','.join(map(str, sku_list))
@@ -37,27 +43,16 @@ def get_sku_list_market_price(bearer: str, sku_list: list):
             raise InvalidPricingRequest()
 
 
-# Uses the same endpoint as list_sku_market_price but takes a single int sku id instead of a list
-
-def get_single_sku_market_price(bearer: str, sku: int):
-    url = "https://api.tcgplayer.com/pricing/sku/{}".format(sku)
-    headers = {'Authorization': 'Bearer ' + bearer}
-    response = requests.request("GET", url, headers=headers)
-    # Response if the sku id passed has pricing, returns SkuPricingData object
-    if response.status_code == 200:
-        return json.loads(response.text)["results"][0]
-    # Response if the bearer token is invalid
-    elif response.status_code == 401:
-        raise InvalidBearerToken()
-    # Response if the sku id was invalid or no data was found
-    elif response.status_code == 404:
-        raise InvalidPricingRequest()
-
-
-# This endpoint takes a group id and returns all pricing data for that group
-# Product Ids will be repeated for each subTypeName that is available even if there is no pricing data
-
 def get_all_price_group(bearer: str, group_id: int):
+    """
+    This endpoint takes a group id and returns all pricing data for that group
+
+    Endpoint name is List Product Prices by Group
+
+    :param bearer: string based access token
+    :param group_id: integer based group id
+    :return: returns full data for the group for every possible subTypeName
+    """
     url = "https://api.tcgplayer.com/pricing/group/{}".format(group_id)
     headers = {'Authorization': 'Bearer ' + bearer}
     response = requests.request("GET", url, headers=headers)
@@ -74,14 +69,18 @@ def get_all_price_group(bearer: str, group_id: int):
         raise NoDataFoundForGroup()
 
 
-# Takes a list of product ids and returns pricing data
-# Please pass the product id list as a list of ints
-# Each product id will return 2 dict entries, one will be subTypeName Normal and one will be foil
-# If no data exists for one all values will be null
+def get_product_market_price(bearer: str, product_list: list):
+    """
+    Takes a list of product ids and returns pricing data for all possible subTypeName
 
-def get_product_list_market_price(bearer: str, product_list: list):
+    Endpoint name is List Product Market Prices
+
+    :param bearer: string based access token
+    :param product_list: list of integer based product ids
+    :return: returns full data including potential errors in the error object section
+    """
     # Handles potential 400 responses
-    if len(product_list) > 250 or len(product_list) < 2:
+    if len(product_list) > 250 or len(product_list) < 1:
         raise InvalidListLength(len(product_list))
     url = "https://api.tcgplayer.com/pricing/product/" + ','.join(map(str, product_list))
     headers = {'Authorization': 'Bearer ' + bearer}
@@ -99,29 +98,18 @@ def get_product_list_market_price(bearer: str, product_list: list):
         raise InvalidPricingRequest()
 
 
-# Takes a single product id and returns a list of all pricing data for each subTypeName
-# TODO redo code to handle single length lists, remove extraneous functions
+def get_product_buylist_price(bearer: str, product_list: list):
+    """
+    Takes a list of product ids and returns buylist data
 
-def get_single_product_market_price(bearer: str, product_id: int):
-    url = "https://api.tcgplayer.com/pricing/product/{}".format(product_id)
-    headers = {'Authorization': 'Bearer ' + bearer}
-    response = requests.request("GET", url, headers=headers)
-    # Returns a list of pricing data associated with the given product id
-    if response.status_code == 200:
-        return json.loads(response.text)["results"]
-    elif response.status_code == 401:
-        raise InvalidBearerToken()
-    # No data was found or the product id was invalid
-    elif response.status_code == 404:
-        raise InvalidPricingRequest()
+    Endpoint name is List Product Buylist Prices
 
-
-# Takes a list of product ids and returns buylist data
-# Takes a list of integer based product ids
-
-def get_product_list_buylist_price(bearer: str, product_list: list):
+    :param bearer: string based access token
+    :param product_list: integer based list of product ids for data to be returned for
+    :return: returns full json data with potential errors indicated in the error section of the object
+    """
     # Handles potential 400 responses
-    if len(product_list) > 250 or len(product_list) < 2:
+    if len(product_list) > 250 or len(product_list) < 1:
         raise InvalidListLength(len(product_list))
     url = "https://api.tcgplayer.com/pricing/buy/product/" + ','.join(map(str, product_list))
     headers = {'Authorization': 'Bearer ' + bearer}
@@ -139,26 +127,18 @@ def get_product_list_buylist_price(bearer: str, product_list: list):
         raise InvalidPricingRequest()
 
 
-# Takes a single product id and returns all buylist data for skus related to the id
+def get_sku_buylist_price(bearer: str, sku_list: str):
+    """
+    Takes an int based list of sku ids and returns buylist data for them
 
-def get_single_product_buylist_price(bearer: str, product_id: int):
-    url = "https://api.tcgplayer.com/pricing/buy/product/{}".format(product_id)
-    headers = {'Authorization': 'Bearer ' + bearer}
-    response = requests.request("GET", url, headers=headers)
-    # Request was successful
-    if response.status_code == 200:
-        return json.loads(response.text)["results"]
-    elif response.status_code == 401:
-        raise InvalidBearerToken()
-    elif response.status_code == 404:
-        raise InvalidPricingRequest()
+    Endpoint name is List SKU Buylist Prices
 
-
-# Takes an int based list of sku ids and returns buylist data for them
-
-def get_sku_list_buylist_price(bearer: str, sku_list: str):
+    :param bearer: string based access token
+    :param sku_list: integer based list of sku ids
+    :return: returns full json data with potential errors indicated in the error section of the object
+    """
     # Handles potential 400 responses
-    if len(sku_list) > 250 or len(sku_list) < 2:
+    if len(sku_list) > 250 or len(sku_list) < 1:
         raise InvalidListLength(len(sku_list))
     url = "https://api.tcgplayer.com/pricing/buy/sku/" + ','.join(map(str, sku_list))
     headers = {'Authorization': 'Bearer ' + bearer}
@@ -176,24 +156,16 @@ def get_sku_list_buylist_price(bearer: str, sku_list: str):
         raise InvalidPricingRequest()
 
 
-# Takes a single sku id and returns pricing data
-
-def get_single_sku_buylist_price(bearer: str, sku_id: int):
-    url = "https://api.tcgplayer.com/pricing/buy/sku/{}".format(sku_id)
-    headers = {'Authorization': 'Bearer ' + bearer}
-    response = requests.request("GET", url, headers=headers)
-    if response.status_code == 200:
-        return json.loads(response.text)["results"]
-    elif response.status_code == 401:
-        raise InvalidBearerToken()
-    # No data was found for the sku id or the sku id was invalid
-    elif response.status_code == 404:
-        raise InvalidPricingRequest()
-
-
-# Gets buylist prices for a set based on the group id
-
 def get_group_buylist_price(bearer: str, group_id: int):
+    """
+    Gets buylist prices for a set based on the group id
+
+    Endpoint name is List Product Buylist Prices by Group
+
+    :param bearer: string based access token
+    :param group_id: integer based group id
+    :return: returns full product id information for the buylist prices of a group
+    """
     url = "https://api.tcgplayer.com/pricing/buy/group/{}".format(group_id)
     headers = {'Authorization': 'Bearer ' + bearer}
     response = requests.request("GET", url, headers=headers)
@@ -202,6 +174,31 @@ def get_group_buylist_price(bearer: str, group_id: int):
     # Request had an invalid group id and is either 0 or less than 0
     elif response.status_code == 400:
         raise InvalidGroupId()
+    elif response.status_code == 401:
+        raise InvalidBearerToken()
+    # No data was found for the group id or it was invalid
+    elif response.status_code == 404:
+        raise InvalidPricingRequest()
+
+
+def get_market_price_for_single_sku(bearer: str, sku_id: int):
+    """
+    Takes a sku id and returns pricing data for that sku, only accepts one sku id at a time
+
+    Endpoint name is Get Market Price by SKU
+
+    :param bearer: string based access token
+    :param sku_id: integer based single sku id
+    :return: pricing data in the form of a json object with no error header
+    """
+    url = "https://api.tcgplayer.com/pricing/marketprices/{}".format(sku_id)
+    headers = {'Authorization': 'Bearer ' + bearer}
+    response = requests.request("GET", url, headers=headers)
+    if response.status_code == 200:
+        return json.loads(response.text)["results"]
+    # Request had an invalid group id and is either 0 or less than 0
+    elif response.status_code == 400:
+        raise InvalidSkuIdRequest()
     elif response.status_code == 401:
         raise InvalidBearerToken()
     # No data was found for the group id or it was invalid
